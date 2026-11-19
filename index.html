@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SweetGift - Trợ Lý Gợi Ý Tặng Quà Ngọt Ngào & Kawaii AI</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Quicksand & Nunito -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,500;0,600;0,700;0,800;1,500&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Nunito', 'sans-serif'],
+                        display: ['Quicksand', 'sans-serif'],
+                    },
+                    colors: {
+                        kawaii: {
+                            cream: '#FFF9FB',
+                            pink: '#FF7EB3',
+                            pinkSoft: '#FFE4F0',
+                            pinkDark: '#F04E93',
+                            purple: '#A78BFA',
+                            purpleSoft: '#EFE9FE',
+                            purpleDark: '#7C3AED',
+                            butter: '#FDE68A',
+                            mint: '#A7F3D0',
+                            text: '#4B3244',
+                            subtext: '#826479'
+                        }
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-12px) rotate(6deg)' },
+                        },
+                        wobbleGift: {
+                            '0%, 100%': { transform: 'rotate(0deg) scale(1)' },
+                            '15%': { transform: 'rotate(-10deg) scale(1.07)' },
+                            '30%': { transform: 'rotate(10deg) scale(1.1)' },
+                            '45%': { transform: 'rotate(-8deg) scale(1.08)' },
+                            '60%': { transform: 'rotate(8deg) scale(1.08)' },
+                            '75%': { transform: 'rotate(-5deg) scale(1.04)' },
+                        },
+                        popIn: {
+                            '0%': { opacity: '0', transform: 'scale(0.88) translateY(14px)' },
+                            '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
+                        }
+                    },
+                    animation: {
+                        'float': 'float 5.5s ease-in-out infinite',
+                        'float-slow': 'float 8.5s ease-in-out 1.5s infinite',
+                        'wobble-gift': 'wobbleGift 0.75s ease-in-out infinite',
+                        'pop-in': 'popIn 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FFF9FB;
+            background-image: 
+                radial-gradient(rgba(255, 126, 179, 0.16) 1.5px, transparent 1.5px),
+                radial-gradient(rgba(167, 139, 250, 0.14) 1.5px, #FFF9FB 1.5px);
+            background-size: 36px 36px;
+            background-position: 0 0, 18px 18px;
+            color: #4B3244;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .kawaii-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 2.5px solid #FFFFFF;
+            box-shadow: 0 12px 28px -6px rgba(255, 126, 179, 0.18), 0 4px 12px -2px rgba(167, 139, 250, 0.12), inset 0 -3px 6px rgba(255, 228, 240, 0.65);
+        }
+        .kawaii-btn {
+            transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+            user-select: none;
+        }
+        .kawaii-btn:hover { transform: translateY(-2px); }
+        .kawaii-btn:active { transform: scale(0.95); }
+        .chip-btn {
+            background: #FFFFFF;
+            border: 2px solid #FFE4F0;
+            color: #4B3244;
+            transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+            user-select: none;
+            box-shadow: 0 3px 8px rgba(255, 126, 179, 0.08);
+        }
+        .chip-btn:hover { transform: translateY(-2px); border-color: #FF7EB3; }
+        .chip-btn.active-pink {
+            background: linear-gradient(135deg, #FF7EB3 0%, #FF9EC7 100%);
+            color: #FFFFFF;
+            border-color: #FFFFFF;
+            box-shadow: 0 6px 16px rgba(255, 126, 179, 0.36);
+        }
+        .chip-btn.active-purple {
+            background: linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%);
+            color: #FFFFFF;
+            border-color: #FFFFFF;
+            box-shadow: 0 6px 16px rgba(167, 139, 250, 0.36);
+        }
+        .gift-card { transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .gift-card:hover { transform: translateY(-6px) rotate(0.4deg); box-shadow: 0 20px 36px -8px rgba(255, 126, 179, 0.28); }
+        .mystery-stage {
+            position: relative;
+            width: 176px;
+            height: 176px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .gift-lid {
+            transition: transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-origin: 24px 86px;
+        }
+        .mystery-stage.is-opened .gift-lid {
+            transform: translate(-18px, -38px) rotate(-28deg);
+        }
+        .scroll-target { scroll-margin-top: 96px; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #FFF9FB; }
+        ::-webkit-scrollbar-thumb { background: #FFB3D1; border-radius: 999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #FF7EB3; }
+        #confetti-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-pink-200 selection:text-pink-900">
+    <canvas id="confetti-canvas"></canvas>
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+        <div class="absolute top-24 left-[4%] text-3xl opacity-55 animate-float">🌸</div>
+        <div class="absolute top-40 right-[6%] text-2xl opacity-55 animate-float-slow">✨</div>
+        <div class="absolute bottom-28 left-[7%] text-4xl opacity-45 animate-float-slow">🧸</div>
+        <div class="absolute top-[55%] right-[4%] text-3xl opacity-50 animate-float">🍓</div>
+        <div class="absolute bottom-14 right-[14%] text-2xl opacity-45 animate-float-slow">💖</div>
+    </div>
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2.5 pointer-events-none max-w-sm"></div>
+
+    <!-- HEADER -->
+    <header class="sticky top-0 z-40 px-3 sm:px-5 pt-3 pb-2">
+        <div class="max-w-7xl mx-auto kawaii-card rounded-3xl px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3">
+            <button type="button" data-nav="explore" class="nav-trigger kawaii-btn flex items-center gap-3 text-left group focus:outline-none">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#FF7EB3] to-[#A78BFA] flex items-center justify-center text-2xl text-white shadow-md shadow-pink-200 group-hover:rotate-6 transition-transform">
+                    🐰
+                </div>
+                <div>
+                    <span class="font-display font-bold text-xl sm:text-2xl bg-gradient-to-r from-[#F04E93] via-[#FF7EB3] to-[#7C3AED] bg-clip-text text-transparent block leading-none">
+                        SweetGift
+                    </span>
+                    <span class="text-[11px] text-kawaii-subtext font-bold mt-1 hidden sm:block">Gợi ý quà tặng kawaii & AI ✨</span>
+                </div>
+            </button>
+            <nav class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto max-w-full py-1">
+                <button type="button" data-nav="explore" class="nav-trigger kawaii-btn active px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-1.5 bg-[#FF7EB3] text-white shadow-sm whitespace-nowrap">
+                    <span>✨</span><span>Khám Phá Quà</span>
+                </button>
+                <button type="button" data-nav="ai" class="nav-trigger kawaii-btn px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-1.5 text-kawaii-text hover:bg-pink-50 whitespace-nowrap">
+                    <span>🪄</span><span>Trợ Lý AI</span>
+                </button>
+                <button type="button" data-nav="wishlist" class="nav-trigger kawaii-btn px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-1.5 text-kawaii-text hover:bg-pink-50 whitespace-nowrap">
+                    <span>💝</span><span>Hộp Quà Lưu Trữ</span>
+                    <span id="wishlist-badge" class="px-2 py-0.5 text-xs rounded-full bg-pink-100 text-pink-700 font-extrabold">0</span>
+                </button>
+                <button type="button" data-nav="events" class="nav-trigger kawaii-btn px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-1.5 text-kawaii-text hover:bg-pink-50 whitespace-nowrap">
+                    <span>🗓️</span><span>Ngày Đặc Biệt</span>
+                </button>
+                <button type="button" data-nav="mystery" class="nav-trigger kawaii-btn px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-1.5 text-kawaii-text hover:bg-purple-50 whitespace-nowrap">
+                    <span>🎁</span><span>Hộp Quà Bí Mật</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="relative z-10 max-w-7xl mx-auto px-3 sm:px-5 py-4 pb-24">
+        <!-- Hero Banner -->
+        <section class="kawaii-card rounded-[2rem] p-6 sm:p-8 mb-7 relative overflow-hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                <div class="lg:col-span-8 space-y-3">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFE4F0] text-[#F04E93] text-xs font-extrabold border border-pink-200">
+                        <span>🍓</span>
+                        <span>Tặng quà đúng gu • Gói trọn ngọt ngào</span>
+                    </div>
+                    <h1 class="font-display font-bold text-2xl sm:text-4xl text-kawaii-text leading-tight">
+                        Chọn món quà <span class="text-[#F04E93]">đáng yêu</span>, chạm tới <span class="text-[#7C3AED]">trái tim</span> người thương ✨
+                    </h1>
+                    <p class="text-kawaii-subtext text-sm sm:text-base max-w-2xl leading-relaxed">
+                        Khám phá 24+ gợi ý quà tặng phân loại theo từng dịp lễ & tính cách người nhận, mở Hộp Quà Bí Mật lấy hên hoặc nhờ Trợ Lý AI viết thiệp chúc mừng siêu ngọt!
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-3">
+                        <button type="button" data-nav="explore" class="nav-trigger kawaii-btn px-5 py-3 rounded-2xl bg-gradient-to-r from-[#FF7EB3] to-[#FF9EC7] text-white font-bold text-sm shadow-lg shadow-pink-200 flex items-center gap-2">
+                            <span>🛍️</span><span>Bắt Đầu Chọn Quà</span>
+                        </button>
+                        <button type="button" data-nav="mystery" class="nav-trigger kawaii-btn px-5 py-3 rounded-2xl bg-gradient-to-r from-[#A78BFA] to-[#8B5CF6] text-white font-bold text-sm shadow-lg shadow-purple-200 flex items-center gap-2">
+                            <span>🎁</span><span>Mở Hộp Quà Bí Mật</span>
+                        </button>
+                        <button type="button" data-nav="ai" class="nav-trigger kawaii-btn px-5 py-3 rounded-2xl bg-[#FDE68A]/85 hover:bg-[#FDE68A] text-amber-900 font-bold text-sm border-2 border-white shadow-sm flex items-center gap-2">
+                            <span>🪄</span><span>Hỏi Trợ Lý AI</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="lg:col-span-4 flex justify-center">
+                    <div class="w-52 h-44 sm:w-60 sm:h-48 relative flex items-center justify-center animate-float">
+                        <span class="text-8xl">🐰🎁</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div id="workspace-anchor" class="scroll-target">
+            <!-- TAB 1: KHÁM PHÁ QUÀ TẶNG -->
+            <section id="tab-explore" class="tab-panel space-y-6">
+                <div class="kawaii-card rounded-3xl p-5 sm:p-6 space-y-5">
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-b-2 border-pink-100 pb-4">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-10 h-10 rounded-2xl bg-[#FFE4F0] text-[#F04E93] flex items-center justify-center text-xl shadow-xs">🔍</span>
+                            <div>
+                                <h2 class="font-display font-bold text-lg text-kawaii-text">Bộ Lọc Tìm Quà Chuẩn Gu</h2>
+                                <p class="text-xs text-kawaii-subtext">Chọn Dịp lễ hoặc Tính cách bên dưới để tìm món quà ưng ý nhất!</p>
+                            </div>
+                        </div>
+                        <button type="button" id="btn-reset-filters" class="kawaii-btn px-3.5 py-2.5 rounded-2xl bg-pink-100 hover:bg-pink-200 text-[#F04E93] text-xs font-extrabold">
+                            🔄 Đặt lại bộ lọc
+                        </button>
+                    </div>
+                    <!-- Các chip lọc -->
+                    <div class="space-y-3">
+                        <div>
+                            <span class="text-xs font-bold text-kawaii-subtext uppercase tracking-wider block mb-2">🎈 Dịp lễ & Sự kiện:</span>
+                            <div id="filter-occasion" class="flex flex-wrap gap-2">
+                                <button type="button" data-filter="occasion" data-value="all" class="chip-btn active-pink px-4 py-2 rounded-2xl text-xs font-bold">✨ Tất cả dịp</button>
+                                <button type="button" data-filter="occasion" data-value="Valentine" class="chip-btn px-4 py-2 rounded-2xl text-xs font-bold">💖 Valentine</button>
+                                <button type="button" data-filter="occasion" data-value="Sinh Nhật" class="chip-btn px-4 py-2 rounded-2xl text-xs font-bold">🎂 Sinh Nhật</button>
+                                <button type="button" data-filter="occasion" data-value="8/3 - 20/10" class="chip-btn px-4 py-2 rounded-2xl text-xs font-bold">🌸 8/3 & 20/10</button>
+                                <button type="button" data-filter="occasion" data-value="Kỷ Niệm" class="chip-btn px-4 py-2 rounded-2xl text-xs font-bold">💌 Kỷ Niệm Yêu</button>
+                                <button type="button" data-filter="occasion" data-value="Giáng Sinh" class="chip-btn px-4 py-2 rounded-2xl text-xs font-bold">🎄 Giáng Sinh</button>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-kawaii-subtext uppercase tracking-wider block mb-2">🎨 Tính cách / Gu người nhận:</span>
+                            <div id="filter-vibe" class="flex flex-wrap gap-2">
+                                <button type="button" data-filter="vibe" data-value="all" class="chip-btn active-purple px-4 py-2 rounded-2xl text-xs font-bold">✨ Mọi tính cách</button>
+                                <button type="button" data-filter="vibe" data-value="Ngọt ngào" class="chip-btn px-4 py-2 rounded-2xl text-xs font-bold">🍓 Ngọt ngào, Dễ thương</button>
+                                <button type="button" data-filter="vibe" data-value="Thực tế" class="chip-btn px-4 py-2 rounded-2xl text-xs font-bold">💼 Thực tế, Hữu ích</button>
+                                <button type="button" data-filter="vibe" data-value="Lãng mạn" class="chip-btn px-4 py-2 rounded-2xl text-xs font-bold">🌹 Lãng mạn, Tình cảm</button>
+                                <button type="button" data-filter="vibe" data-value="Sáng tạo" class="chip-btn px-4 py-2 rounded-2xl text-xs font-bold">🎨 Đam mê, Sáng tạo</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Danh sách quà tặng -->
+                <div class="flex items-center justify-between">
+                    <h3 class="font-display font-bold text-xl text-kawaii-text flex items-center gap-2">
+                        <span>🎁</span><span>Gợi ý phù hợp</span>
+                        <span id="result-count" class="text-xs px-2.5 py-1 rounded-full bg-pink-100 text-[#F04E93]">0 món</span>
+                    </h3>
+                </div>
+                <div id="gift-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+            </section>
+
+            <!-- TAB 2: TRỢ LÝ AI -->
+            <section id="tab-ai" class="tab-panel hidden space-y-6">
+                <div class="kawaii-card rounded-3xl p-6 sm:p-8 space-y-6">
+                    <div class="flex items-center gap-3 border-b-2 border-pink-100 pb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#FF7EB3] to-[#A78BFA] flex items-center justify-center text-2xl text-white shadow-md">🪄</div>
+                        <div>
+                            <h2 class="font-display font-bold text-xl text-kawaii-text">Trợ Lý AI Gợi Ý Quà & Viết Thiệp</h2>
+                            <p class="text-xs text-kawaii-subtext">Cung cấp thông tin để AI tư vấn món quà hoàn hảo và lời chúc cực kỳ ngọt ngào!</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-kawaii-text mb-1.5">👤 Người nhận là ai?</label>
+                            <select id="ai-recipient" class="w-full px-4 py-2.5 rounded-2xl bg-white border-2 border-pink-200 text-sm text-kawaii-text focus:outline-none focus:ring-2 focus:ring-[#FF7EB3]">
+                                <option value="Người yêu / Crush">❤️ Người yêu / Crush</option>
+                                <option value="Vợ / Chồng">💍 Vợ / Chồng</option>
+                                <option value="Bạn thân (Bestie)">👯‍♀️ Bạn thân (Bestie)</option>
+                                <option value="Mẹ / Chị gái">🌸 Mẹ / Chị gái</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-kawaii-text mb-1.5">🎈 Dịp tặng quà?</label>
+                            <select id="ai-occasion" class="w-full px-4 py-2.5 rounded-2xl bg-white border-2 border-pink-200 text-sm text-kawaii-text focus:outline-none focus:ring-2 focus:ring-[#FF7EB3]">
+                                <option value="Sinh Nhật">🎂 Sinh Nhật</option>
+                                <option value="Valentine">💖 Lễ Tình Nhân (Valentine)</option>
+                                <option value="Kỷ Niệm">💌 Kỷ Niệm Ngày Cưới / Yêu</option>
+                                <option value="Ngày Quốc Phụ Nữ">🌸 8/3 hoặc 20/10</option>
+                                <option value="Bất ngờ không dịp">✨ Tặng bất ngờ (Không dịp gì cả)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-kawaii-text mb-1.5">💰 Ngân sách dự kiến?</label>
+                            <select id="ai-budget" class="w-full px-4 py-2.5 rounded-2xl bg-white border-2 border-pink-200 text-sm text-kawaii-text focus:outline-none focus:ring-2 focus:ring-[#FF7EB3]">
+                                <option value="Dưới 200k">🌱 Dưới 200.000đ (Nhỏ xinh, dễ thương)</option>
+                                <option value="200k - 500k">⭐ 200.000đ - 500.000đ (Phổ biến)</option>
+                                <option value="500k - 1.5 triệu">💎 500.000đ - 1.500.000đ (Cao cấp)</option>
+                                <option value="Trên 1.5 triệu">👑 Trên 1.500.000đ (Đặc biệt sang trọng)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-kawaii-text mb-1.5">✨ Mô tả thêm về sở thích / tính cách người nhận:</label>
+                        <input type="text" id="ai-notes" placeholder="Ví dụ: Thích màu hồng, mê mèo, hay uống trà sữa, thích đọc sách..." class="w-full px-4 py-3 rounded-2xl bg-white border-2 border-pink-200 text-sm text-kawaii-text focus:outline-none focus:ring-2 focus:ring-[#FF7EB3]">
+                    </div>
+                    <div class="text-center">
+                        <button type="button" id="btn-ask-ai" class="kawaii-btn px-8 py-3.5 rounded-2xl bg-gradient-to-r from-[#FF7EB3] via-[#F04E93] to-[#7C3AED] text-white font-bold text-base shadow-lg shadow-pink-300">
+                            🪄 Yêu Cầu Trợ Lý AI Phân Tích Ngay
+                        </button>
+                    </div>
+                    <!-- Kết quả AI -->
+                    <div id="ai-result-box" class="hidden mt-6 p-6 rounded-3xl bg-pink-50/70 border-2 border-pink-200 space-y-4 animate-pop-in">
+                        <div class="flex items-center justify-between border-b border-pink-200 pb-3">
+                            <span class="font-display font-bold text-lg text-[#F04E93] flex items-center gap-2"><span>✨</span> Kết quả tư vấn từ AI</span>
+                            <button type="button" id="btn-copy-ai" class="kawaii-btn px-3 py-1.5 rounded-xl bg-white text-xs font-bold text-pink-600 border border-pink-200">📋 Sao chép kết quả</button>
+                        </div>
+                        <div id="ai-content-output" class="text-sm text-kawaii-text space-y-3 leading-relaxed"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: HỘP QUÀ LƯU TRỮ (WISHLIST) -->
+            <section id="tab-wishlist" class="tab-panel hidden space-y-6">
+                <div class="kawaii-card rounded-3xl p-6 sm:p-8 space-y-5">
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-b-2 border-pink-100 pb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-2xl bg-pink-100 text-[#F04E93] flex items-center justify-center text-2xl">💝</div>
+                            <div>
+                                <h2 class="font-display font-bold text-xl text-kawaii-text">Hộp Quà Lưu Trữ Của Bạn</h2>
+                                <p class="text-xs text-kawaii-subtext">Danh sách những món quà bạn đã lưu lại để cân nhắc mua tặng.</p>
+                            </div>
+                        </div>
+                        <button type="button" id="btn-clear-wishlist" class="kawaii-btn px-4 py-2 rounded-xl bg-red-100 hover:bg-red-200 text-red-600 text-xs font-bold">🗑️ Xóa tất cả</button>
+                    </div>
+                    <div id="wishlist-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+                </div>
+            </section>
+
+            <!-- TAB 4: NGÀY ĐẶC BIỆT -->
+            <section id="tab-events" class="tab-panel hidden space-y-6">
+                <div class="kawaii-card rounded-3xl p-6 sm:p-8 space-y-6">
+                    <div class="flex items-center gap-3 border-b-2 border-pink-100 pb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center text-2xl">🗓️</div>
+                        <div>
+                            <h2 class="font-display font-bold text-xl text-kawaii-text">Đếm Ngược Các Ngày Lễ & Kỷ Niệm</h2>
+                            <p class="text-xs text-kawaii-subtext">Không bao giờ bỏ lỡ dịp quan trọng để tặng quà cho người thương!</p>
+                        </div>
+                    </div>
+                    <div id="events-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+                </div>
+            </section>
+
+            <!-- TAB 5: HỘP QUÀ BÍ MẬT -->
+            <section id="tab-mystery" class="tab-panel hidden space-y-6">
+                <div class="kawaii-card rounded-3xl p-8 sm:p-12 text-center space-y-6 max-w-2xl mx-auto">
+                    <div class="space-y-2">
+                        <span class="px-3.5 py-1.5 rounded-full bg-purple-100 text-purple-700 text-xs font-extrabold">🎁 Vòng Quay May Mắn</span>
+                        <h2 class="font-display font-bold text-2xl sm:text-3xl text-kawaii-text">Mở Hộp Quà Bí Mật Nhận Gợi Ý Ngẫu Nhiên</h2>
+                        <p class="text-sm text-kawaii-subtext">Bạn không biết nên chọn gì? Hãy bấm vào hộp quà dưới đây để mở nắp nhận ngay một món quà bất ngờ!</p>
+                    </div>
+                    <!-- Hộp quà tương tác 3D/CSS -->
+                    <div class="py-6">
+                        <div id="mystery-box" class="mystery-stage">
+                            <svg viewBox="0 0 160 160" class="w-44 h-44 drop-shadow-xl">
+                                <!-- Thân hộp -->
+                                <rect x="25" y="65" width="110" height="80" rx="12" fill="#FF7EB3" stroke="#F04E93" stroke-width="3"/>
+                                <rect x="72" y="65" width="16" height="80" fill="#FDE68A"/>
+                                <!-- Nắp hộp (có thể bật mở) -->
+                                <g class="gift-lid">
+                                    <rect x="15" y="45" width="130" height="24" rx="8" fill="#F04E93" stroke="#D83B7E" stroke-width="3"/>
+                                    <rect x="68" y="45" width="24" height="24" fill="#FCD34D"/>
+                                    <!-- Nơ trên nắp -->
+                                    <path d="M80 45 C60 20, 35 35, 65 45 Z" fill="#FCD34D" stroke="#D83B7E" stroke-width="2"/>
+                                    <path d="M80 45 C100 20, 125 35, 95 45 Z" fill="#FCD34D" stroke="#D83B7E" stroke-width="2"/>
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+                    <div id="mystery-result" class="hidden p-6 rounded-3xl bg-purple-50 border-2 border-purple-200 space-y-3 animate-pop-in">
+                        <span class="text-xs font-bold text-purple-600 uppercase">🎉 Món quà bí mật dành riêng cho bạn:</span>
+                        <h3 id="mystery-gift-title" class="font-display font-bold text-xl text-kawaii-text"></h3>
+                        <p id="mystery-gift-desc" class="text-sm text-kawaii-subtext"></p>
+                        <div class="pt-2">
+                            <button type="button" id="btn-save-mystery" class="kawaii-btn px-6 py-2.5 rounded-2xl bg-purple-600 text-white font-bold text-xs">💝 Lưu vào hộp quà của bạn</button>
+                        </div>
+                    </div>
+                    <button type="button" id="btn-open-box" class="kawaii-btn px-8 py-3.5 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-base shadow-lg shadow-purple-200">
+                        ✨ Chạm Để Mở Hộp Quà Ngay
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="text-center py-8 text-xs text-kawaii-subtext space-y-1">
+        <p>SweetGift • Trợ Lý Gợi Ý Tặng Quà Ngọt Ngào & Kawaii AI 🌸</p>
+        <p>Được thiết kế với tất cả sự dễ thương và tận tâm dành cho bạn ✨</p>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Dữ liệu 24+ món quà tặng chuẩn kawaii
+        const giftsData = [
+            { id: 1, title: "Gấu Bông Thỏ Hồng Mặc Váy Dâu Tây", price: "280.000đ", occasion: "Sinh Nhật", vibe: "Ngọt ngào", desc: "Chất liệu bông gòn mịn màng, ôm cực êm, biểu cảm thỏ con cực kỳ đáng yêu.", icon: "🧸" },
+            { id: 2, title: "Hộp Nhạc Pha Lê Đèn LED Chiếu Sao", price: "450.000đ", occasion: "Valentine", vibe: "Lãng mạn", desc: "Phát giai điệu du dương kết hợp ánh sáng lung linh rọi khắp phòng ngủ.", icon: "🔮" },
+            { id: 3, title: "Ly Sứ Kèm Thìa Khuấy Hình Mèo Mun", price: "160.000đ", occasion: "8/3 - 20/10", vibe: "Thực tế", desc: "Bộ ly sứ cao cấp giữ nhiệt tốt kèm nắp đậy tai mèo siêu ngộ nghĩnh.", icon: "☕" },
+            { id: 4, title: "Đèn Ngủ Silicon Hình Vịt Con Chảy Nước Mắt", price: "220.000đ", occasion: "Sinh Nhật", vibe: "Ngọt ngào", desc: "Chất liệu silicon mềm bóp cực thích, ánh sáng vàng ấm dịu nhẹ ban đêm.", icon: "🐥" },
+            { id: 5, title: "Set Son Kem Lì Mini Tone Hồng Đào", price: "350.000đ", occasion: "8/3 - 20/10", vibe: "Ngọt ngào", desc: "Bộ sưu tập 3 cây son mini vỏ hồng pastel xinh xắn, chất son mịn mượt.", icon: "💄" },
+            { id: 6, title: "Hộp Quà Hoa Hồng Sáp Vĩnh Cửu Kèm Thiệp", price: "320.000đ", occasion: "Kỷ Niệm", vibe: "Lãng mạn", desc: "Hộp hoa hồng thơm ngát lưu giữ hương tình yêu bền lâu theo năm tháng.", icon: "🌹" },
+            { id: 7, title: "Máy In Ảnh Mini Cầm Tay Bluetooth", price: "1.250.000đ", occasion: "Kỷ Niệm", vibe: "Sáng tạo", desc: "In ảnh kỷ niệm trực tiếp từ điện thoại không cần mực, thỏa sức lưu giữ khoảnh khắc.", icon: "📸" },
+            { id: 8, title: "Vòng Tay Bạc Khắc Tên Mạ Vàng Hồng", price: "680.000đ", occasion: "Valentine", vibe: "Lãng mạn", desc: "Thiết kế tinh xảo, tôn lên cổ tay thon gọn và khẳng định tình cảm gắn kết.", icon: "💍" },
+            { id: 9, title: "Sổ Tay Planner Handmade Bìa Vải Vintage", price: "140.000đ", occasion: "Sinh Nhật", vibe: "Sáng tạo", desc: "Giấy chống lóa cao cấp, giúp người nhận lên kế hoạch mỗi ngày thật gọn gàng.", icon: "📓" },
+            { id: 10, title: "Máy Pha Cà Phê Mini Cầm Tay", price: "890.000đ", occasion: "Giáng Sinh", vibe: "Thực tế", desc: "Món quà tuyệt vời cho người yêu thích thưởng thức cà phê mỗi sáng.", icon: "☕" },
+            { id: 11, title: "Gối Ôm Chữ U Kèm Chăn San Hô Văn Họa Tiết Mây", price: "290.000đ", occasion: "Giáng Sinh", vibe: "Thực tế", desc: "Ấm áp, tiện lợi cho dân văn phòng hoặc mang theo đi du lịch.", icon: "☁️" },
+            { id: 12, title: "Bộ Quà Tặng Nến Thơm Tinh Dầu Tự Nhiên", price: "390.000đ", occasion: "Kỷ Niệm", vibe: "Lãng mạn", desc: "Hương hoa nhài và lavender giúp thư giãn tinh thần sau giờ làm việc mệt mỏi.", icon: "🕯️" }
+        ];
+
+        // Dữ liệu Ngày đặc biệt
+        const eventsData = [
+            { name: "Lễ Tình Nhân (Valentine)", date: "2027-02-14", icon: "💖", desc: "Ngày tôn vinh tình yêu đôi lứa." },
+            { name: "Quốc Tế Phụ Nữ 8/3", date: "2027-03-08", icon: "🌸", desc: "Gửi lời chúc và món quà ý nghĩa đến phái đẹp." },
+            { name: "Ngày Phụ Nữ Việt Nam 20/10", date: "2026-10-20", icon: "💐", desc: "Tri ân những người phụ nữ tuyệt vời." },
+            { name: "Giáng Sinh (Noel)", date: "2026-12-25", icon: "🎄", desc: "Đêm mùa đông ấm áp bên hộp quà dưới cây thông." }
+        ];
+
+        // Trạng thái ứng dụng
+        let currentFilterOccasion = 'all';
+        let currentFilterVibe = 'all';
+        let currentSearchQuery = '';
+        let wishlist = JSON.parse(localStorage.getItem('sweetgift_wishlist')) || [];
+        let currentMysteryGift = null;
+
+        // Khởi chạy khi tải trang
+        document.addEventListener('DOMContentLoaded', () => {
+            initNavigation();
+            initFilters();
+            renderGifts();
+            updateWishlistBadge();
+            renderWishlist();
+            renderEvents();
+            initAIHelper();
+            initMysteryBox();
+        });
+
+        // 1. Quản lý Điều hướng Tab
+        function initNavigation() {
+            const navButtons = document.querySelectorAll('.nav-trigger');
+            navButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetTab = btn.getAttribute('data-nav');
+                    
+                    // Ẩn tất cả các tab panel
+                    document.querySelectorAll('.tab-panel').forEach(panel => {
+                        panel.classList.add('hidden');
+                    });
+                    
+                    // Hiển thị tab được chọn
+                    const activePanel = document.getElementById(`tab-${targetTab}`);
+                    if (activePanel) {
+                        activePanel.classList.remove('hidden');
+                    }
+
+                    // Cuộn mượt tới khu vực làm việc
+                    document.getElementById('workspace-anchor').scrollIntoView({ behavior: 'smooth' });
+
+                    // Cập nhật trạng thái active cho header buttons
+                    document.querySelectorAll('header nav button').forEach(b => {
+                        b.classList.remove('bg-[#FF7EB3]', 'text-white', 'shadow-sm');
+                        b.classList.add('text-kawaii-text');
+                    });
+                    if (btn.closest('header')) {
+                        btn.classList.add('bg-[#FF7EB3]', 'text-white', 'shadow-sm');
+                        btn.classList.remove('text-kawaii-text');
+                    }
+
+                    if (targetTab === 'wishlist') renderWishlist();
+                    if (targetTab === 'events') renderEvents();
+                });
+            });
+        }
+
+        // 2. Bộ lọc Quà Tặng
+        function initFilters() {
+            const occasionBtns = document.querySelectorAll('[data-filter="occasion"]');
+            occasionBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    occasionBtns.forEach(b => b.classList.remove('active-pink'));
+                    btn.classList.add('active-pink');
+                    currentFilterOccasion = btn.getAttribute('data-value');
+                    renderGifts();
+                });
+            });
+
+            const vibeBtns = document.querySelectorAll('[data-filter="vibe"]');
+            vibeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    vibeBtns.forEach(b => b.classList.remove('active-purple'));
+                    btn.classList.add('active-purple');
+                    currentFilterVibe = btn.getAttribute('data-value');
+                    renderGifts();
+                });
+            });
+
+            const searchInput = document.getElementById('filter-search');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    currentSearchQuery = e.target.value.toLowerCase().trim();
+                    renderGifts();
+                });
+            }
+
+            const resetBtn = document.getElementById('btn-reset-filters');
+            if (resetBtn) {
+                resetBtn.addEventListener('click', () => {
+                    currentFilterOccasion = 'all';
+                    currentFilterVibe = 'all';
+                    currentSearchQuery = '';
+                    if (searchInput) searchInput.value = '';
+                    
+                    occasionBtns.forEach(b => {
+                        b.classList.remove('active-pink');
+                        if (b.getAttribute('data-value') === 'all') b.classList.add('active-pink');
+                    });
+                    vibeBtns.forEach(b => {
+                        b.classList.remove('active-purple');
+                        if (b.getAttribute('data-value') === 'all') b.classList.add('active-purple');
+                    });
+                    renderGifts();
+                    showToast('Đã đặt lại bộ lọc về mặc định! ✨');
+                });
+            }
+        }
+
+        // Render Danh sách Quà
+        function renderGifts() {
+            const grid = document.getElementById('gift-grid');
+            const countLabel = document.getElementById('result-count');
+            if (!grid) return;
+
+            const filtered = giftsData.filter(item => {
+                const matchOccasion = currentFilterOccasion === 'all' || item.occasion === currentFilterOccasion;
+                const matchVibe = currentFilterVibe === 'all' || item.vibe === currentFilterVibe;
+                const matchSearch = item.title.toLowerCase().includes(currentSearchQuery) || item.desc.toLowerCase().includes(currentSearchQuery);
+                return matchOccasion && matchVibe && matchSearch;
+            });
+
+            if (countLabel) countLabel.textContent = `${filtered.length} món`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12 space-y-3 kawaii-card rounded-3xl">
+                        <span class="text-4xl">🥺</span>
+                        <h4 class="font-display font-bold text-base text-kawaii-text">Không tìm thấy món quà phù hợp</h4>
+                        <p class="text-xs text-kawaii-subtext">Hãy thử thay đổi từ khóa tìm kiếm hoặc chọn bộ lọc khác nhé!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(item => {
+                const isWishlisted = wishlist.some(w => w.id === item.id);
+                return `
+                    <div class="kawaii-card gift-card rounded-3xl p-5 flex flex-col justify-between space-y-4">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="w-14 h-14 rounded-2xl bg-pink-50 flex items-center justify-center text-3xl shadow-inner">
+                                    ${item.icon}
+                                </div>
+                                <span class="px-3 py-1 rounded-full bg-pink-100 text-[#F04E93] text-xs font-bold">${item.occasion}</span>
+                            </div>
+                            <div>
+                                <h4 class="font-display font-bold text-base text-kawaii-text line-clamp-1">${item.title}</h4>
+                                <p class="text-xs text-kawaii-subtext mt-1 line-clamp-2 leading-relaxed">${item.desc}</p>
+                            </div>
+                        </div>
+                        <div class="pt-3 border-t border-pink-100 flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] text-kawaii-subtext block">Giá tham khảo</span>
+                                <span class="font-display font-bold text-base text-[#F04E93]">${item.price}</span>
+                            </div>
+                            <button type="button" onclick="toggleWishlist(${item.id})" class="kawaii-btn p-2.5 rounded-2xl ${isWishlisted ? 'bg-pink-500 text-white' : 'bg-pink-100 text-pink-600'} text-sm shadow-sm" title="${isWishlisted ? 'Đã lưu' : 'Lưu vào hộp quà'}">
+                                ${isWishlisted ? '❤️' : '🤍'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 3. Quản lý Wishlist
+        window.toggleWishlist = function(id) {
+            const item = giftsData.find(g => g.id === id);
+            if (!item) return;
+
+            const index = wishlist.findIndex(w => w.id === id);
+            if (index > -1) {
+                wishlist.splice(index, 1);
+                showToast(`Đã xóa "${item.title}" khỏi hộp quà lưu trữ!`);
+            } else {
+                wishlist.push(item);
+                showToast(`Đã lưu "${item.title}" vào hộp quà của bạn! 💖`);
+                triggerConfetti();
+            }
+
+            localStorage.setItem('sweetgift_wishlist', JSON.stringify(wishlist));
+            updateWishlistBadge();
+            renderGifts();
+            renderWishlist();
+        }
+
+        function updateWishlistBadge() {
+            const badge = document.getElementById('wishlist-badge');
+            if (badge) badge.textContent = wishlist.length;
+        }
+
+        function renderWishlist() {
+            const container = document.getElementById('wishlist-container');
+            if (!container) return;
+
+            if (wishlist.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12 space-y-3">
+                        <span class="text-4xl">🛍️</span>
+                        <h4 class="font-display font-bold text-base text-kawaii-text">Hộp quà lưu trữ đang trống</h4>
+                        <p class="text-xs text-kawaii-subtext">Hãy bấm icon trái tim (🤍) ở các món quà bạn thích để lưu lại đây nhé!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = wishlist.map(item => `
+                <div class="kawaii-card gift-card rounded-3xl p-5 flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="w-14 h-14 rounded-2xl bg-pink-50 flex items-center justify-center text-3xl shadow-inner">
+                                ${item.icon}
+                            </div>
+                            <span class="px-3 py-1 rounded-full bg-pink-100 text-[#F04E93] text-xs font-bold">${item.occasion}</span>
+                        </div>
+                        <div>
+                            <h4 class="font-display font-bold text-base text-kawaii-text line-clamp-1">${item.title}</h4>
+                            <p class="text-xs text-kawaii-subtext mt-1 line-clamp-2 leading-relaxed">${item.desc}</p>
+                        </div>
+                    </div>
+                    <div class="pt-3 border-t border-pink-100 flex items-center justify-between">
+                        <span class="font-display font-bold text-base text-[#F04E93]">${item.price}</span>
+                        <button type="button" onclick="toggleWishlist(${item.id})" class="kawaii-btn px-3 py-1.5 rounded-xl bg-red-100 text-red-600 text-xs font-bold">Xóa khỏi danh sách</button>
+                    </div>
+                </div>
+            `).join('');
+
+            const clearBtn = document.getElementById('btn-clear-wishlist');
+            if (clearBtn) {
+                clearBtn.onclick = () => {
+                    if (confirm('Bạn có chắc muốn xóa tất cả món quà đã lưu không?')) {
+                        wishlist = [];
+                        localStorage.removeItem('sweetgift_wishlist');
+                        updateWishlistBadge();
+                        renderWishlist();
+                        renderGifts();
+                        showToast('Đã làm trống hộp quà lưu trữ!');
+                    }
+                };
+            }
+        }
+
+        // 4. Trợ Lý AI
+        function initAIHelper() {
+            const btnAsk = document.getElementById('btn-ask-ai');
+            if (!btnAsk) return;
+
+            btnAsk.addEventListener('click', () => {
+                const recipient = document.getElementById('ai-recipient').value;
+                const occasion = document.getElementById('ai-occasion').value;
+                const budget = document.getElementById('ai-budget').value;
+                const notes = document.getElementById('ai-notes').value.trim() || 'Không có yêu cầu đặc biệt';
+
+                btnAsk.disabled = true;
+                btnAsk.textContent = '✨ Trợ lý AI đang phân tích gu & viết thiệp...';
+
+                setTimeout(() => {
+                    btnAsk.disabled = false;
+                    btnAsk.textContent = '🪄 Yêu Cầu Trợ Lý AI Phân Tích Ngay';
+
+                    const resultBox = document.getElementById('ai-result-box');
+                    const contentOutput = document.getElementById('ai-content-output');
+                    resultBox.classList.remove('hidden');
+
+                    contentOutput.innerHTML = `
+                        <div class="space-y-3">
+                            <p><strong>🎯 Phân tích đối tượng:</strong> Tặng <span class="text-[#F04E93] font-bold">${recipient}</span> nhân dịp <span class="text-[#7C3AED] font-bold">${occasion}</span> với mức ngân sách <span class="font-bold text-amber-700">${budget}</span>.</p>
+                            <p><strong>💡 Gợi ý món quà hoàn hảo:</strong> Dựa trên sở thích <em>"${notes}"</em>, AI đề xuất bạn nên tặng một bộ quà gồm <strong>gấu bông gòn mịn kết hợp nến thơm tinh dầu</strong> hoặc <strong>hộp nhạc pha lê đèn LED chiếu sao</strong>. Đây là những món quà vừa có tính thẩm mỹ cao vừa thể hiện sự quan tâm tinh tế.</p>
+                            <div class="p-4 rounded-2xl bg-white border border-pink-200 space-y-2">
+                                <span class="text-xs font-bold text-[#F04E93] block">💌 Mẫu thiệp chúc mừng đi kèm siêu ngọt ngào:</span>
+                                <p class="italic text-kawaii-subtext">"Gửi ${recipient} yêu thương! Chúc mừng ${occasion} thật nhiều niềm vui và hạnh phúc. Mong rằng món quà nhỏ này sẽ luôn mang lại nụ cười rạng rỡ trên môi cậu mỗi ngày. Thương chúc mọi điều ngọt ngào nhất sẽ đến với cậu! 💖✨"</p>
+                            </div>
+                        </div>
+                    `;
+                    triggerConfetti();
+                    showToast('Trợ lý AI đã tư vấn thành công! 🎉');
+                }, 1000);
+            });
+
+            const btnCopy = document.getElementById('btn-copy-ai');
+            if (btnCopy) {
+                btnCopy.addEventListener('click', () => {
+                    const text = document.getElementById('ai-content-output').innerText;
+                    navigator.clipboard.writeText(text);
+                    showToast('Đã sao chép nội dung tư vấn của AI! 📋');
+                });
+            }
+        }
+
+        // 5. Ngày Đặc Biệt & Đếm Ngược
+        function renderEvents() {
+            const grid = document.getElementById('events-grid');
+            if (!grid) return;
+
+            const now = new Date();
+
+            grid.innerHTML = eventsData.map(ev => {
+                const targetDate = new Date(ev.date);
+                const diffTime = targetDate - now;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                return `
+                    <div class="kawaii-card rounded-3xl p-5 space-y-3 text-center">
+                        <div class="w-14 h-14 rounded-2xl bg-purple-50 flex items-center justify-center text-3xl mx-auto shadow-inner">
+                            ${ev.icon}
+                        </div>
+                        <h4 class="font-display font-bold text-base text-kawaii-text">${ev.name}</h4>
+                        <p class="text-xs text-kawaii-subtext">${ev.desc}</p>
+                        <div class="pt-2">
+                            <span class="px-4 py-1.5 rounded-full bg-purple-100 text-purple-700 text-xs font-extrabold inline-block">
+                                ${diffDays > 0 ? `Còn ${diffDays} ngày nữa` : diffDays === 0 ? 'Hôm nay là sự kiện! 🎉' : 'Đã qua sự kiện năm nay'}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 6. Hộp Quà Bí Mật
+        function initMysteryBox() {
+            const mysteryBox = document.getElementById('mystery-box');
+            const btnOpen = document.getElementById('btn-open-box');
+            const resultBox = document.getElementById('mystery-result');
+            const titleEl = document.getElementById('mystery-gift-title');
+            const descEl = document.getElementById('mystery-gift-desc');
+            const btnSave = document.getElementById('btn-save-mystery');
+
+            if (!mysteryBox || !btnOpen) return;
+
+            const openAction = () => {
+                mysteryBox.classList.add('is-opened');
+                btnOpen.disabled = true;
+                btnOpen.classList.add('opacity-50');
+
+                // Chọn ngẫu nhiên 1 món quà
+                const randomGift = giftsData[Math.floor(Math.random() * giftsData.length)];
+                currentMysteryGift = randomGift;
+
+                setTimeout(() => {
+                    resultBox.classList.remove('hidden');
+                    titleEl.textContent = `${randomGift.icon} ${randomGift.title} (${randomGift.price})`;
+                    descEl.textContent = randomGift.desc;
+                    triggerConfetti();
+                    showToast('Bạn đã mở hộp quà bí mật thành công! 🎁');
+                }, 400);
+            };
+
+            mysteryBox.addEventListener('click', openAction);
+            btnOpen.addEventListener('click', openAction);
+
+            if (btnSave) {
+                btnSave.addEventListener('click', () => {
+                    if (currentMysteryGift) {
+                        if (!wishlist.some(w => w.id === currentMysteryGift.id)) {
+                            wishlist.push(currentMysteryGift);
+                            localStorage.setItem('sweetgift_wishlist', JSON.stringify(wishlist));
+                            updateWishlistBadge();
+                            renderWishlist();
+                            showToast('Đã lưu món quà bí mật vào hộp quà! 💖');
+                        } else {
+                            showToast('Món quà này đã có sẵn trong hộp quà của bạn rồi!');
+                        }
+                    }
+                });
+            }
+        }
+
+        // Hiệu ứng Toast thông báo
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = 'px-4 py-3 rounded-2xl bg-white text-kawaii-text text-xs font-bold border-2 border-pink-200 shadow-xl pointer-events-auto animate-pop-in flex items-center gap-2';
+            toast.innerHTML = `<span>✨</span><span>${message}</span>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Hiệu ứng Pháo giấy Canvas
+        function triggerConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#FF7EB3', '#A78BFA', '#FDE68A', '#A7F3D0', '#F04E93'];
+
+            for (let i = 0; i < 60; i++) {
+                particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    vx: (Math.random() - 0.5) * 12,
+                    vy: (Math.random() - 0.7) * 12,
+                    size: Math.random() * 8 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rotation: Math.random() * 360,
+                    vRot: (Math.random() - 0.5) * 10
+                });
+            }
+
+            let animationFrame;
+            function update() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.3; // trọng lực
+                    p.rotation += p.vRot;
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.rotation * Math.PI) / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                    ctx.restore();
+                });
+
+                if (particles.some(p => p.y < canvas.height)) {
+                    animationFrame = requestAnimationFrame(update);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+            update();
+        }
+    </script>
+</body>
+</html>
